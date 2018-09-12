@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<config>
+	</config>
+	<macros>
+		<macro name="TEST_MACRO1" value="Global test macro 1 value"/>
+		<macro name="TEST_MACRO3" value="Global test macro 3 value"/>
+	</macros>
+	<file name="example.txt">
+		<macros>
+			<macro name="TEST_MACRO2" value="File-specific test macro 2 value"/>
+		</macros>
+		<section template="cmake/example"/>
+		<section template="cmake/example">
+			<macros>
+				<macro name="TEST_MACRO3" value="Section-specific test macro 3 value"/>
+			</macros>
+		</section>
+		<section strip="true">This is inline pulautin.xml section.
+			Some macros:
+			{{TEST_MACRO1}}
+		</section>
+	</file>
+</project>

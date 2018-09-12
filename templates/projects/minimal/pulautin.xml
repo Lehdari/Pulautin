@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<config>
+	</config>
+	<macros>
+		<macro name="EXECUTABLE_NAME" value="Minimal"/>
+		<macro name="CMAKE_VERSION" value="2.8"/>
+		<macro name="CXX_STANDARD" value="17"/>
+	</macros>
+	<file name="CMakeLists.txt">
+		<section template="cmake/header"/>
+		<section template="cmake/executable"/>
+	</file>
+</project>

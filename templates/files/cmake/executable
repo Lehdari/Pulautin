@@ -1,0 +1,1 @@
+add_executable({{EXECUTABLE_NAME}} ${BINARY_SOURCES})
