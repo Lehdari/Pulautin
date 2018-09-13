@@ -2,6 +2,8 @@ import xml.etree.ElementTree as et
 import os
 import glob
 
+import flags
+
 
 def parseMacros(rootNode, macroList):
 	macrosNode = rootNode.find('macros')
@@ -47,7 +49,7 @@ def buildFile(fileName, fNode):
 	f.close()
 
 
-def buildProject(projectPath, cfgList={}, macroList={}):
+def buildProject(projectPath, flags, cfgList={}, macroList={}):
 	tree = et.parse(projectPath + 'pulautin.xml')
 	root = tree.getroot()
 
@@ -70,6 +72,16 @@ def buildProject(projectPath, cfgList={}, macroList={}):
 	# apply global macros
 	for fileName in glob.iglob(projectPath + '**/*', recursive=True):
 		if os.path.isdir(fileName):
+			continue
+
+		# check for file extension
+		goodExt = False
+		for ext in flags.macroFileExtensions:
+			if '.' + fileName.split('.')[-1] == ext:
+				goodExt = True
+				break
+
+		if not goodExt:
 			continue
 
 		f = open(fileName, "r")

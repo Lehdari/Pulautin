@@ -1,7 +1,12 @@
 #include <cstdio>
 
+#include "Types.hpp"
+
+
 int main(void) {
-    printf("Hello {{PROJECT_NAME}}!\n");
+	MyType projName = "{{PROJECT_NAME}}";
+
+    printf("Hello %s!\n", projName.c_str());
 
     return 0;
 }

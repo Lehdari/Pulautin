@@ -2,13 +2,9 @@ import configparser as cfg
 import argparse
 import os
 import shutil
+
+from flags import Flags
 from xml_builder import buildProject
-
-
-
-class Flags:
-	def __init__(self):
-		self.force = False
 
 
 def createArgParser():
@@ -43,7 +39,7 @@ def parseArgs(parser, cfgList, macroList, flags=None):
 			macroList[mSplit[0]] = mSplit[1]
 
 
-def loadConfig(fileName, cfgList, macroList):
+def loadConfig(fileName, cfgList, macroList, flags=None):
 	config = cfg.ConfigParser()
 	config.read(fileName)
 
@@ -53,7 +49,11 @@ def loadConfig(fileName, cfgList, macroList):
 				macroList[key.upper()] = config[section][key]
 		else:
 			for key in config[section]:
-				cfgList[key.upper()] = config[section][key]
+				if key.upper() == 'MACRO_FILE_EXTENSIONS':
+					if flags is not None:
+						flags.macroFileExtensions = config[section][key].split(' ')
+				else:
+					cfgList[key.upper()] = config[section][key]
 
 
 def printConfig(cfgList, macroList):
@@ -77,7 +77,7 @@ def main():
 	cfgList = {}
 	macroList = {}
 	flags = Flags()
-	loadConfig('pulautin.conf', cfgList, macroList)
+	loadConfig('pulautin.conf', cfgList, macroList, flags)
 
 	# Parse command line arguments
 	parser = createArgParser()
@@ -110,7 +110,7 @@ def main():
 	# Copy template to destination directory
 	copyTemplate(templateDir, destDir)
 
-	buildProject(destDir, cfgList, macroList)
+	buildProject(destDir, flags, cfgList, macroList)
 
 	printConfig(cfgList, macroList) # TEMP
 

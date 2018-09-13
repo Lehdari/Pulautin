@@ -1,1 +1,6 @@
-add_executable({{EXECUTABLE_NAME}} ${BINARY_SOURCES})
+add_subdirectory({{HEADERS_DIR}})
+add_subdirectory({{SOURCES_DIR}})
+
+add_executable({{EXECUTABLE_NAME}} ${{{HEADERS_VAR}}} ${{{SOURCES_VAR}}})
+
+target_include_directories({{EXECUTABLE_NAME}} PUBLIC {{HEADERS_DIR}})

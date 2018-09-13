@@ -4,4 +4,3 @@ project({{PROJECT_NAME}})
 set(CMAKE_CXX_STANDARD {{CXX_STANDARD}})
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(src)
