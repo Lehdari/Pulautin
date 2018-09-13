@@ -15,15 +15,15 @@ def createArgParser():
 	return parser;
 
 
-def parseArgs(parser, cfgList, macroList):
+def parseArgs(parser, flags):
 	args = parser.parse_args()
 
 	if args.project_path:
-		cfgList['PROJECT_PATH'] = args.project_path
+		flags.cfgList['PROJECT_PATH'] = args.project_path
 		pathSplit = args.project_path.split('/') # parse project name from path
 		if pathSplit[-1] == '':
 			pathSplit.pop()
-		cfgList['PROJECT_NAME'] = pathSplit[-1]
+		flags.cfgList['PROJECT_NAME'] = pathSplit[-1]
 
 	if args.macros:
 		for macro in args.macros:
@@ -34,7 +34,7 @@ def parseArgs(parser, cfgList, macroList):
 			macroList[mSplit[0]] = mSplit[1]
 
 
-def loadConfig(fileName, cfgList, macroList, flags=None):
+def loadConfig(fileName, flags):
 	config = cfg.ConfigParser()
 	config.read(fileName)
 
@@ -45,46 +45,43 @@ def loadConfig(fileName, cfgList, macroList, flags=None):
 		else:
 			for key in config[section]:
 				if key.upper() == 'MACRO_FILE_EXTENSIONS':
-					if flags is not None:
-						flags.macroFileExtensions = config[section][key].split(' ')
+					flags.macroFileExtensions = config[section][key].split(' ')
 				else:
-					cfgList[key.upper()] = config[section][key]
+					flags.cfgList[key.upper()] = config[section][key]
 
 
-def printConfig(cfgList, macroList):
+def printConfig(cfgList, flags):
 	print('\nCONFIG:\n')
-	for key in cfgList:
-		print(key + ' = ' + cfgList[key])
+	for key in flags.cfgList:
+		print(key + ' = ' + flags.cfgList[key])
 
 	print('\nMACROS:\n')
-	for key in macroList:
-		print(key + ' = ' + macroList[key])
+	for key in flags.macroList:
+		print(key + ' = ' + flags.macroList[key])
 
 
 def main():
 	# Load initial config
-	cfgList = {}
-	macroList = {}
 	flags = Flags()
-	loadConfig('pulautin.conf', cfgList, macroList, flags=flags)
+	loadConfig('pulautin.conf', flags)
 
 	# Parse command line arguments
 	parser = createArgParser()
-	parseArgs(parser, cfgList, macroList)
+	parseArgs(parser, flags)
 
 	# Check for configuration errors
-	if cfgList['PROJECT_PATH'] == '':
+	if flags.cfgList['PROJECT_PATH'] == '':
 		print("Error: Please provide project path")
 		return 1
 
-	destDir = cfgList['PROJECT_PATH'] + '/'
+	destDir = flags.cfgList['PROJECT_PATH'] + '/'
 	if not os.path.isdir(destDir):
 		print('Error: directory \'' + destDir + '\' does not exist')
 		return 1
 
-	buildProject(destDir, flags, cfgList, macroList)
+	buildProject(destDir, flags)
 
-	printConfig(cfgList, macroList)
+	printConfig(flags.cfgList, flags)
 
 
 main()

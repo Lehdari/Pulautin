@@ -2,7 +2,7 @@ import xml.etree.ElementTree as et
 import os
 import glob
 
-import flags
+from flags import Flags
 
 
 def parseMacros(rootNode, macroList, overwrite=True):
@@ -52,7 +52,7 @@ def buildFile(fileName, fNode):
 	f.close()
 
 
-def buildProject(projectPath, flags, cfgList={}, macroList={}):
+def buildProject(projectPath, flags):
 	tree = et.parse(projectPath + 'pulautin.xml')
 	root = tree.getroot()
 
@@ -62,15 +62,17 @@ def buildProject(projectPath, flags, cfgList={}, macroList={}):
 		return
 
 	# parse macros
-	parseMacros(root, macroList, overwrite=False)
+	parseMacros(root, flags.macroList, overwrite=False)
 
 	# create files
-	for fNode in root.findall('file'):
-		fileName = projectPath + fNode.attrib['name'];
-		if os.path.isfile(fileName):
-			os.remove(fileName)
+	filesNode = root.find('files')
+	if filesNode:
+		for fNode in filesNode.findall('file'):
+			fileName = projectPath + fNode.attrib['name'];
+			if os.path.isfile(fileName):
+				os.remove(fileName)
 
-		buildFile(fileName, fNode)
+			buildFile(fileName, fNode)
 
 	# apply global macros
 	for fileName in glob.iglob(projectPath + '**/*', recursive=True):
@@ -91,5 +93,5 @@ def buildProject(projectPath, flags, cfgList={}, macroList={}):
 		fRaw = f.read()
 		f.close()
 		f = open(fileName, "w")
-		f.write(applyMacros(fRaw, {**cfgList, **macroList}))
+		f.write(applyMacros(fRaw, {**flags.cfgList, **flags.macroList}))
 		f.close()

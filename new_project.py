@@ -18,17 +18,17 @@ def createArgParser():
 	return parser;
 
 
-def parseArgs(parser, cfgList, macroList, flags=None):
+def parseArgs(parser, flags):
 	args = parser.parse_args()
 
 	if args.project_name:
-		cfgList['PROJECT_NAME'] = args.project_name
+		flags.cfgList['PROJECT_NAME'] = args.project_name
 	if args.template:
-		cfgList['TEMPLATE'] = args.template
+		flags.cfgList['TEMPLATE'] = args.template
 	if args.dest_root:
-		cfgList['DEST_ROOT'] = args.dest_root
-	if flags is not None:
-		flags.force = args.force
+		flags.cfgList['DEST_ROOT'] = args.dest_root
+
+	flags.force = args.force
 
 	if args.macros:
 		for macro in args.macros:
@@ -36,34 +36,33 @@ def parseArgs(parser, cfgList, macroList, flags=None):
 			if len(mSplit) < 2:
 				print('Error parsing macro argument: ' + macro)
 				continue
-			macroList[mSplit[0]] = mSplit[1]
+			flags.macroList[mSplit[0]] = mSplit[1]
 
 
-def loadConfig(fileName, cfgList, macroList, flags=None):
+def loadConfig(fileName, flags):
 	config = cfg.ConfigParser()
 	config.read(fileName)
 
 	for section in config:
 		if section == 'MACROS':
 			for key in config[section]:
-				macroList[key.upper()] = config[section][key]
+				flags.macroList[key.upper()] = config[section][key]
 		else:
 			for key in config[section]:
 				if key.upper() == 'MACRO_FILE_EXTENSIONS':
-					if flags is not None:
-						flags.macroFileExtensions = config[section][key].split(' ')
+					flags.macroFileExtensions = config[section][key].split(' ')
 				else:
-					cfgList[key.upper()] = config[section][key]
+					flags.cfgList[key.upper()] = config[section][key]
 
 
-def printConfig(cfgList, macroList):
+def printConfig(flags):
 	print('\nCONFIG:\n')
-	for key in cfgList:
-		print(key + ' = ' + cfgList[key])
+	for key in flags.cfgList:
+		print(key + ' = ' + flags.cfgList[key])
 
 	print('\nMACROS:\n')
-	for key in macroList:
-		print(key + ' = ' + macroList[key])
+	for key in flags.macroList:
+		print(key + ' = ' + flags.macroList[key])
 
 
 def copyTemplate(templateDir, destDir):
@@ -77,29 +76,29 @@ def main():
 	cfgList = {}
 	macroList = {}
 	flags = Flags()
-	loadConfig('pulautin.conf', cfgList, macroList, flags)
+	loadConfig('pulautin.conf', flags)
 
 	# Parse command line arguments
 	parser = createArgParser()
-	parseArgs(parser, cfgList, macroList, flags=flags)
+	parseArgs(parser, flags)
 
 	# Specify template directory, check for existence
-	templateDir = 'templates/projects/' + cfgList['TEMPLATE'] + '/'
+	templateDir = 'templates/projects/' + flags.cfgList['TEMPLATE'] + '/'
 	if not os.path.isdir(templateDir):
 		print('ERROR: project template from directory \'' + templateDir +'\' not found')
-		printConfig(cfgList, macroList)
+		printConfig(flags)
 		return 1
 
 	# Check for configuration errors
-	if cfgList['PROJECT_NAME'] == '':
+	if flags.cfgList['PROJECT_NAME'] == '':
 		print("Error: Please provide project name (option -p)")
 		return 1
 
-	if cfgList['DEST_ROOT'] == '':
+	if flags.cfgList['DEST_ROOT'] == '':
 		print("Error: Please provide destination root directory (option -d)")
 		return 1
 
-	destDir = cfgList['DEST_ROOT'] + '/' + cfgList['PROJECT_NAME'] + '/'
+	destDir = flags.cfgList['DEST_ROOT'] + '/' + flags.cfgList['PROJECT_NAME'] + '/'
 	if os.path.isdir(destDir):
 		if flags.force:
 			shutil.rmtree(destDir)
@@ -110,9 +109,9 @@ def main():
 	# Copy template to destination directory
 	copyTemplate(templateDir, destDir)
 
-	buildProject(destDir, flags, cfgList, macroList)
+	buildProject(destDir, flags)
 
-	printConfig(cfgList, macroList) # TEMP
+	printConfig(flags) # TEMP
 
 
 
