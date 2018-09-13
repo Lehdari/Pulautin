@@ -5,11 +5,14 @@ import glob
 import flags
 
 
-def parseMacros(rootNode, macroList):
+def parseMacros(rootNode, macroList, overwrite=True):
 	macrosNode = rootNode.find('macros')
 	if macrosNode:
 		for m in macrosNode.iter('macro'):
-			macroList[m.attrib['name'].upper()] = m.attrib['value']
+			key = m.attrib['name'].upper()
+			if key in macroList and not overwrite:
+				continue
+			macroList[key] = m.attrib['value']
 
 
 def applyMacros(str, macroList):
@@ -59,7 +62,7 @@ def buildProject(projectPath, flags, cfgList={}, macroList={}):
 		return
 
 	# parse macros
-	parseMacros(root, macroList)
+	parseMacros(root, macroList, overwrite=False)
 
 	# create files
 	for fNode in root.findall('file'):
