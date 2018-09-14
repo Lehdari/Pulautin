@@ -2,6 +2,7 @@ import configparser as cfg
 import argparse
 import os
 import shutil
+import paramiko
 
 from flags import Flags
 from xml_builder import buildProject
@@ -71,6 +72,35 @@ def copyTemplate(templateDir, destDir):
 		os.remove(destDir + '/template.conf')
 
 
+def setupRemote(destDir, flags):
+	if flags.cfgList['GIT_SERVER_ADDRESS'] == '' or flags.cfgList['GIT_SERVER_USER'] == '':
+		return
+
+	# server setup
+	sshAddr = flags.cfgList['GIT_SERVER_ADDRESS']
+	sshUser = flags.cfgList['GIT_SERVER_USER']
+	sshPath = flags.cfgList['GIT_SERVER_PATH']
+	projName = flags.cfgList['PROJECT_NAME']
+
+	# command to run on the server
+	sshComm = 'cd '+sshPath+'/.pulautin/; ./new_repository.sh '+projName+'; cd ..; ls -a'
+
+	ssh = paramiko.SSHClient()
+	ssh.load_system_host_keys()
+	ssh.connect(sshAddr, 22, sshUser)
+	ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(sshComm)
+	
+	#print(destDir)
+
+	os.chdir(destDir)
+	os.system('ls -a')
+	os.system('git init')
+	os.system('git add --all')
+	os.system('git commit -m "Initial Commit"')
+	os.system('git remote add origin '+sshUser+'@'+sshAddr+':'+sshPath+projName)
+	os.system('git push -u origin master')
+
+
 def main():
 	# Load initial config
 	cfgList = {}
@@ -88,6 +118,8 @@ def main():
 		print('ERROR: project template from directory \'' + templateDir +'\' not found')
 		printConfig(flags)
 		return 1
+
+	printConfig(flags) # TEMP
 
 	# Check for configuration errors
 	if flags.cfgList['PROJECT_NAME'] == '':
@@ -109,10 +141,9 @@ def main():
 	# Copy template to destination directory
 	copyTemplate(templateDir, destDir)
 
+	# Build the project according to the XML
 	buildProject(destDir, flags)
 
-	printConfig(flags) # TEMP
-
-
+	setupRemote(destDir, flags)
 
 main()
