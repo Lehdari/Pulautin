@@ -63,7 +63,7 @@ def printConfig(cfgList, flags):
 def main():
 	# Load initial config
 	flags = Flags()
-	loadConfig('pulautin.conf', flags)
+	loadConfig(flags.dir + 'pulautin.conf', flags)
 
 	# Parse command line arguments
 	parser = createArgParser()

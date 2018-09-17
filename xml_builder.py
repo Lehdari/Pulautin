@@ -16,6 +16,7 @@ def parseMacros(rootNode, macroList, overwrite=True):
 
 
 def applyMacros(str, macroList):
+	#print(str)
 	for m, val in macroList.items():
 		mm = '{{' + m + '}}'
 		str = str.replace(mm, val)
@@ -23,7 +24,7 @@ def applyMacros(str, macroList):
 	return str;
 
 
-def buildFile(fileName, fNode):
+def buildFile(fileName, fNode, flags):
 	f = open(fileName, "w")
 
 	macroList = {}
@@ -39,7 +40,7 @@ def buildFile(fileName, fNode):
 				stripLines = True
 
 			if 'template' in fElem.attrib:
-				with open('templates/files/' + fElem.attrib['template']) as ft:
+				with open(flags.dir + 'templates/files/' + fElem.attrib['template']) as ft:
 					for line in ft:
 						f.write(applyMacros(line, sMacroList))
 			else:
@@ -72,7 +73,7 @@ def buildProject(projectPath, flags):
 			if os.path.isfile(fileName):
 				os.remove(fileName)
 
-			buildFile(fileName, fNode)
+			buildFile(fileName, fNode, flags)
 
 	# apply global macros
 	for fileName in glob.iglob(projectPath + '**/*', recursive=True):

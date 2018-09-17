@@ -106,7 +106,7 @@ def main():
 	cfgList = {}
 	macroList = {}
 	flags = Flags()
-	loadConfig('pulautin.conf', flags)
+	loadConfig(flags.dir + 'pulautin.conf', flags)
 
 	# Parse command line arguments
 	parser = createArgParser()
