@@ -1,0 +1,8 @@
+#Find and link OpenCV
+set(OpenCV_DIR $ENV{OPENCV_DIR})
+set(OpenCV_STATIC OFF)
+
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+target_link_libraries({{TARGET_NAME}} ${OpenCV_LIBS})
+

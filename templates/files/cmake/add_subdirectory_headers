@@ -2,7 +2,8 @@
 
 file(GLOB SUB_HEADERS "*.hpp")
 
-set(EXECUTABLE_HEADERS
-    ${EXECUTABLE_HEADERS}
+set({{SOURCES_VAR}}
+    ${{{SOURCES_VAR}}}
     ${SUB_HEADERS}
     PARENT_SCOPE)
+

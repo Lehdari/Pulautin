@@ -1,0 +1,7 @@
+add_subdirectory({{HEADERS_DIR}})
+add_subdirectory({{SOURCES_DIR}})
+
+add_library({{LIBRARY_NAME}} SHARED ${{{HEADERS_VAR}}} ${{{SOURCES_VAR}}})
+
+target_include_directories({{LIBRARY_NAME}} PUBLIC {{HEADERS_DIR}})
+

@@ -1,0 +1,3 @@
+#Add Eigen include directory
+include_directories( "$ENV{EIGEN3_INCLUDE_DIR}" )
+
