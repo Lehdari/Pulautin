@@ -1,5 +1,4 @@
-#   add sources
-
+# Add sources
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} SUB_SOURCES)
 
 set({{SOURCES_VAR}}

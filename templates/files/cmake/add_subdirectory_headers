@@ -1,5 +1,4 @@
-#   add headers
-
+# Add headers
 file(GLOB SUB_HEADERS "*.hpp")
 
 set({{SOURCES_VAR}}

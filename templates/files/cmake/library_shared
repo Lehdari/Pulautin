@@ -1,3 +1,4 @@
+# Add shared library: {{LIBRARY_NAME}}
 add_subdirectory({{HEADERS_DIR}})
 add_subdirectory({{SOURCES_DIR}})
 
