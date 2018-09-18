@@ -1,7 +1,6 @@
 import configparser as cfg
 import argparse
 import os
-import shutil
 
 from flags import Flags
 from xml_builder import buildProject
@@ -19,10 +18,20 @@ def parseArgs(parser, flags):
 	args = parser.parse_args()
 
 	if args.project_path:
-		flags.cfgList['PROJECT_PATH'] = args.project_path
-		pathSplit = args.project_path.split('/') # parse project name from path
-		if pathSplit[-1] == '':
-			pathSplit.pop()
+		flags.cfgList['PROJECT_PATH'] = os.getcwd() + '/' + args.project_path
+
+		# parse project name from path
+		pathSplit = flags.cfgList['PROJECT_PATH'].replace('\\','/').split('/')
+		good = False
+		while (good == False):
+			good = True
+			if pathSplit[-1] == '':
+				pathSplit.pop()
+				good = False
+			if pathSplit[-1][0] == '.':
+				pathSplit.pop()
+				good = False
+
 		flags.cfgList['PROJECT_NAME'] = pathSplit[-1]
 
 	if args.macros:
