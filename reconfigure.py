@@ -41,7 +41,7 @@ def loadConfig(fileName, flags):
 	for section in config:
 		if section == 'MACROS':
 			for key in config[section]:
-				macroList[key.upper()] = config[section][key]
+				flags.macroList[key.upper()] = config[section][key]
 		else:
 			for key in config[section]:
 				if key.upper() == 'MACRO_FILE_EXTENSIONS':
