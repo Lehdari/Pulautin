@@ -1,0 +1,5 @@
+# Find and link SFML
+find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
+target_link_libraries({{TARGET_NAME}} sfml-system sfml-window sfml-graphics)
+
+
