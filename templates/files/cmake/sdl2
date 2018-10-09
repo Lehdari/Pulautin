@@ -1,0 +1,13 @@
+#Find and link SDL 2
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/modules)
+
+if(WIN32)
+    set(SDL2_PATH $ENV{SDL2_DIR})
+    if(NOT SDL2_PATH)
+        message(FATAL_ERROR "Please set SDL2_DIR environment variable to point to SDL 2 installation directory.")
+    endif()
+endif()
+
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIR})
+target_link_libraries({{EXECUTABLE_NAME}} PUBLIC ${SDL2_LIBRARY})
