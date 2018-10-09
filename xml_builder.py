@@ -2,6 +2,7 @@ import xml.etree.ElementTree as et
 import os
 import glob
 import shutil
+import datetime
 
 from flags import Flags
 
@@ -108,6 +109,8 @@ def buildProject(projectPath, flags):
 
 	# parse macros
 	parseMacros(root, flags.macroList, overwrite=False)
+	# add date macro
+	flags.macroList['DATE'] = datetime.datetime.now().strftime("%Y-%m-%d")
 
 	# setup git
 	gitNode = root.find('git')
